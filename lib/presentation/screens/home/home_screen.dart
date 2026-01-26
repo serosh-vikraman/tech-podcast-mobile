@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -72,11 +73,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               // 1. Header (Global AppBar used instead)
               // const SizedBox(height: 20),
 
-              // 2. Today's Top 5 Podcasts
+              // 2. Recent Podcast
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: const Text(
-                  "Today's Top 5 Podcasts",
+                  "Recent Podcast",
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -85,7 +86,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              _buildTopPodcastsCarousel(),
+              _buildRecentPodcastsCarousel(),
 
               const SizedBox(height: 24),
 
@@ -103,7 +104,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildTopPodcastsCarousel() {
+  Widget _buildRecentPodcastsCarousel() {
     // Mock data for carousel
     final items = [
       {
@@ -117,6 +118,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         'subtitle': 'with Lucy Ross',
         'imageColor': Color(0xFFFB923C),
         'gradient': [Color(0xFFFB923C), Color(0xFFFDBA74)],
+      },
+      {
+        'title': ' The Future of AI.',
+        'subtitle': 'Exploring AGI with Dr. Smith.',
+        'imageColor': Color(0xFF60A5FA),
+        'gradient': [Color(0xFF60A5FA), Color(0xFF93C5FD)],
+      },
+      {
+        'title': 'Flutter Mastery.',
+        'subtitle': 'Advanced techniques.',
+        'imageColor': Color(0xFF34D399),
+        'gradient': [Color(0xFF34D399), Color(0xFF6EE7B7)],
+      },
+      {
+        'title': 'System Design.',
+        'subtitle': 'Scalability patterns.',
+        'imageColor': Color(0xFFA78BFA),
+        'gradient': [Color(0xFFA78BFA), Color(0xFFC4B5FD)],
       },
     ];
 
@@ -241,17 +260,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final currentColor =
         _studioFeatures[_selectedCategoryIndex]['color'] as Color;
 
-    // Mock items
+    // Mock items - TEMPORARILY EMPTY to show Empty State
     final items = [
-      {'title': 'Enjoy It!', 'subtitle': 'Socially Buzzed', 'dur': '22 min'},
-      {'title': 'Grow with Us', 'subtitle': 'Business', 'dur': '12 min'},
-      {
-        'title': 'Crack the Interview',
-        'subtitle': 'Educational',
-        'dur': '30 min',
-      },
-      {'title': 'The Daily Standup', 'subtitle': 'Tech News', 'dur': '15 min'},
+      // {'title': 'Enjoy It!', 'subtitle': 'Socially Buzzed', 'dur': '22 min'},
+      // {'title': 'Grow with Us', 'subtitle': 'Business', 'dur': '12 min'},
+      // {
+      //   'title': 'Crack the Interview',
+      //   'subtitle': 'Educational',
+      //   'dur': '30 min',
+      // },
+      // {'title': 'The Daily Standup', 'subtitle': 'Tech News', 'dur': '15 min'},
     ];
+
+    if (items.isEmpty) {
+      return _buildEmptyState();
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -328,6 +351,72 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           );
         }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 40),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1F2937).withOpacity(0.5),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.mic_none_outlined,
+                size: 48,
+                color: Color(0xFF6B7280),
+              ),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'No Podcasts Yet',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFFF9FAFB),
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              "It's quiet here. Start your journey by creating your first AI-generated podcast.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                color: Color(0xFF9CA3AF),
+                height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 32),
+            ElevatedButton.icon(
+              onPressed: () {
+                // Navigate to Create tab (index 2 in the shell route)
+                // Assuming standard GoRouter integration with StatefulShellRoute
+                context.go('/create'); 
+              },
+              icon: const Icon(Icons.add_rounded),
+              label: const Text('Create New Podcast'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF3B82F6), // Blue accent
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                textStyle: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

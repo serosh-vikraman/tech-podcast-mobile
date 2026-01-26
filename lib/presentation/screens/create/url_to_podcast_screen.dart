@@ -145,82 +145,151 @@ class _UrlToPodcastScreenState extends State<UrlToPodcastScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: _buildConfigCard(
-                      '1',
-                      'Host Accent',
-                      Column(
-                        children: [
-                          Row(
+              // 1. Host Accent (Full Width)
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0F172A).withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFF1E293B)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1E293B),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text(
+                            '1',
+                            style: TextStyle(
+                              color: Color(0xFF94A3B8),
+                              fontSize: 10,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'Host Accent',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(child: _buildClickableFlag('US', '🇺🇸')),
+                        const SizedBox(width: 8),
+                        Expanded(child: _buildClickableFlag('UK', '🇬🇧')),
+                        const SizedBox(width: 8),
+                        Expanded(child: _buildClickableFlag('IN', '🇮🇳')),
+                        const SizedBox(width: 8),
+                        Expanded(child: _buildClickableFlag('AU', '🇦🇺')),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // 2. Podcast Settings (Combined)
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0F172A).withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFF1E293B)),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1E293B),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text(
+                            '2',
+                            style: TextStyle(
+                              color: Color(0xFF94A3B8),
+                              fontSize: 10,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'Podcast Settings',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: _buildFlagBtn(
-                                  'US',
-                                  '🇺🇸',
-                                  _hostAccent == 'US',
+                              const Text(
+                                'Conversation Tone',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 10,
                                 ),
                               ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: _buildFlagBtn(
-                                  'UK',
-                                  '🇬🇧',
-                                  _hostAccent == 'UK',
-                                ),
-                              ),
+                              const SizedBox(height: 8),
+                              _buildDropdown(_tone, [
+                                'Engaging & Lively',
+                                'Professional',
+                                'Technical',
+                              ]),
                             ],
                           ),
-                          const SizedBox(height: 8),
-                          Row(
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: _buildFlagBtn(
-                                  'IN',
-                                  '🇮🇳',
-                                  _hostAccent == 'IN',
+                              const Text(
+                                'Episode Length',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 10,
                                 ),
                               ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: _buildFlagBtn(
-                                  'AU',
-                                  '🇦🇺',
-                                  _hostAccent == 'AU',
-                                ),
-                              ),
+                              const SizedBox(height: 8),
+                              _buildDropdown(_length, [
+                                'Short (2-3 mins)',
+                                'Long (5-10 mins)',
+                              ]),
                             ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: _buildConfigCard(
-                      '2',
-                      'Conversation Tone',
-                      _buildDropdown(_tone, [
-                        'Engaging & Lively',
-                        'Professional',
-                        'Technical',
-                      ]),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: _buildConfigCard(
-                      '3',
-                      'Episode Length',
-                      _buildDropdown(_length, [
-                        'Short (2-3 mins)',
-                        'Long (5-10 mins)',
-                      ]),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               const SizedBox(height: 48),
               SizedBox(
@@ -257,74 +326,31 @@ class _UrlToPodcastScreenState extends State<UrlToPodcastScreen> {
     );
   }
 
-  Widget _buildConfigCard(String number, String title, Widget content) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      height: 160,
-      decoration: BoxDecoration(
-        color: const Color(0xFF0F172A).withOpacity(0.5),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF1E293B)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1E293B),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  number,
-                  style: const TextStyle(
-                    color: Color(0xFF94A3B8),
-                    fontSize: 10,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 11,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
+  Widget _buildClickableFlag(String label, String flag) {
+    final isSelected = _hostAccent == label;
+    return GestureDetector(
+      onTap: () => setState(() => _hostAccent = label),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFF1E1B4B) : const Color(0xFF020617),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: isSelected
+                ? const Color(0xFF6366F1)
+                : const Color(0xFF1E293B),
           ),
-          const Spacer(),
-          content,
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFlagBtn(String label, String flag, bool isSelected) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
-        color: isSelected ? const Color(0xFF1E1B4B) : const Color(0xFF020617),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: isSelected ? const Color(0xFF6366F1) : const Color(0xFF1E293B),
         ),
-      ),
-      child: Column(
-        children: [
-          Text(flag, style: const TextStyle(fontSize: 14)),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: const TextStyle(color: Colors.white, fontSize: 10),
-          ),
-        ],
+        child: Column(
+          children: [
+            Text(flag, style: const TextStyle(fontSize: 14)),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: const TextStyle(color: Colors.white, fontSize: 10),
+            ),
+          ],
+        ),
       ),
     );
   }

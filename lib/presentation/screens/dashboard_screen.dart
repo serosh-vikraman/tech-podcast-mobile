@@ -2,25 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tech_podcast_mobile/presentation/widgets/audio/mini_player.dart';
+import 'package:tech_podcast_mobile/presentation/widgets/side_menu.dart';
 
-class DashboardScreen extends ConsumerWidget {
+class DashboardScreen extends ConsumerStatefulWidget {
   final StatefulNavigationShell navigationShell;
 
   const DashboardScreen({required this.navigationShell, super.key});
 
+  @override
+  ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   void _goBranch(int index) {
-    navigationShell.goBranch(
+    widget.navigationShell.goBranch(
       index,
-      initialLocation: index == navigationShell.currentIndex,
+      initialLocation: index == widget.navigationShell.currentIndex,
     );
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     // Current route index
-    final currentIndex = navigationShell.currentIndex;
+    final currentIndex = widget.navigationShell.currentIndex;
 
     return Scaffold(
+      key: _scaffoldKey,
+      endDrawer: const SideMenu(),
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
@@ -81,12 +91,30 @@ class DashboardScreen extends ConsumerWidget {
               ],
             ),
           ),
+          // Menu Button
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: const Color(0xFF1F2937), // Dark Gray
+              shape: BoxShape.circle,
+              border: Border.all(color: const Color(0xFF374151)),
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.menu, color: Colors.white),
+              padding: EdgeInsets.zero,
+              onPressed: () {
+                _scaffoldKey.currentState?.openEndDrawer();
+              },
+            ),
+          ),
+          const SizedBox(width: 16),
         ],
       ),
       body: Stack(
         children: [
           // Main Content
-          navigationShell,
+          widget.navigationShell,
 
           // MiniPlayer placed above the bottom bar
           const Positioned(left: 0, right: 0, bottom: 90, child: MiniPlayer()),

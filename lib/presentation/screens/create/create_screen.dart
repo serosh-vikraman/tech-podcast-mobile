@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class CreateScreen extends StatelessWidget {
   const CreateScreen({super.key});
@@ -126,10 +127,11 @@ class CreateScreen extends StatelessWidget {
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
                   final studio = studios[index];
+                  // Staggered Animation
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 16),
                     child: _buildStudioCard(context, studio),
-                  );
+                  ).animate().fadeIn(duration: 400.ms, delay: (50 * index).ms).slideY(begin: 0.2, end: 0, curve: Curves.easeOutQuad);
                 }, childCount: studios.length),
               ),
             ),
@@ -146,150 +148,197 @@ class CreateScreen extends StatelessWidget {
     final List<Color> colors = studio['colors'] as List<Color>;
     final String route = studio['route'] as String;
 
-    return Material(
-      color: Colors.transparent,
-      borderRadius: BorderRadius.circular(16),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () {
-          // Verify if route is enabled
-          if (route == '/create/nano-learning' ||
-              route == '/create/interview-twin' ||
-              route == '/create/jd-decoder' ||
-              route == '/create/recruiters-eye' ||
-              route == '/create/salary-negotiator' ||
-              route == '/create/architecture' ||
-              route == '/create/tech-battle' ||
-              route == '/create/url-to-podcast') {
-            context.push(route);
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Coming Soon: ${studio['title']}')),
-            );
-          }
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFF262626)),
-            gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [const Color(0xFF171717), const Color(0xFF0A0A0A)],
-            ),
-          ),
-          child: Stack(
-            children: [
-              // Background Glow
-              Positioned(
-                bottom: -20,
-                right: -20,
-                child: Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: colors.first.withOpacity(0.1),
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: colors.first.withOpacity(0.2),
-                        blurRadius: 40,
-                        spreadRadius: 10,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Left: Icon Container
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF262626),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: const Color(0xFF404040)),
-                      ),
-                      child: Icon(
-                        studio['icon'] as IconData,
-                        color: colors.last,
-                        size: 28,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-
-                    // Right: Content
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Badge
-                          Container(
-                            margin: const EdgeInsets.only(bottom: 8),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: colors.first.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              studio['badge'] as String,
-                              style: TextStyle(
-                                color: colors.first,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-
-                          // Title
-                          Text(
-                            studio['title'] as String,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-
-                          // Subtitle
-                          Text(
-                            studio['subtitle'] as String,
-                            style: const TextStyle(
-                              color: Color(0xFF737373),
-                              fontSize: 13,
-                              height: 1.4,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Arrow
-                    const Padding(
-                      padding: EdgeInsets.only(top: 20, left: 8),
-                      child: Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        color: Color(0xFF525252),
-                        size: 16,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+    return _InteractiveCard(
+      onTap: () {
+        // Verify if route is enabled
+        if (route == '/create/nano-learning' ||
+            route == '/create/interview-twin' ||
+            route == '/create/jd-decoder' ||
+            route == '/create/recruiters-eye' ||
+            route == '/create/salary-negotiator' ||
+            route == '/create/architecture' ||
+            route == '/create/tech-battle' ||
+            route == '/create/url-to-podcast') {
+          context.push(route);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Coming Soon: ${studio['title']}')),
+          );
+        }
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.white.withOpacity(0.08)),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFF1E293B).withOpacity(0.6), // Dark Slate
+              const Color(0xFF0F172A).withOpacity(0.8), // Darker
             ],
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
+        child: Stack(
+          children: [
+            // Background Glow (Subtle)
+            Positioned(
+              top: -20,
+              right: -20,
+              child: Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  color: colors.first.withOpacity(0.15),
+                  shape: BoxShape.circle,
+                ),
+              ).animate(onPlay: (c) => c.repeat(reverse: true))
+              .scaleXY(begin: 1, end: 1.2, duration: 2000.ms, curve: Curves.easeInOut),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Icon
+                  Container(
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      color: colors.first.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: colors.first.withOpacity(0.3)),
+                    ),
+                    child: Icon(
+                      studio['icon'] as IconData,
+                      color: colors.first, // Use the primary color
+                      size: 26,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+
+                  // Text Content
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Badge
+                        Container(
+                          margin: const EdgeInsets.only(bottom: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: colors.last.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: colors.last.withOpacity(0.3), width: 0.5),
+                          ),
+                          child: Text(
+                            studio['badge'] as String,
+                            style: TextStyle(
+                              color: colors.first,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.3,
+                            ),
+                          ),
+                        ),
+
+                        Text(
+                          studio['title'] as String,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          studio['subtitle'] as String,
+                          style: TextStyle(
+                            color: Colors.grey[400],
+                            fontSize: 13,
+                            height: 1.4,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Arrow
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8, top: 18),
+                    child: Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      color: Colors.white.withOpacity(0.2),
+                      size: 16,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Bouncy Interactive Card Wrapper
+class _InteractiveCard extends StatefulWidget {
+  final Widget child;
+  final VoidCallback onTap;
+
+  const _InteractiveCard({required this.child, required this.onTap});
+
+  @override
+  State<_InteractiveCard> createState() => _InteractiveCardState();
+}
+
+class _InteractiveCardState extends State<_InteractiveCard> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 100));
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.96).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => _controller.forward(),
+      onTapUp: (_) {
+        _controller.reverse();
+        widget.onTap();
+      },
+      onTapCancel: () => _controller.reverse(),
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: widget.child,
       ),
     );
   }

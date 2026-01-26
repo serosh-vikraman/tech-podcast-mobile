@@ -48,6 +48,7 @@ dependencies:
   flutter_animate: ^4.5.0
   pinput: ^4.0.0
   form_builder_validators: any
+  file_picker: ^10.3.8
 
 dev_dependencies:
   flutter_test:

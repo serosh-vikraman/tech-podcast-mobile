@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:tech_podcast_mobile/data/repositories/auth_repository.dart';
 import 'package:tech_podcast_mobile/presentation/screens/auth/login_screen.dart';
 import 'package:tech_podcast_mobile/presentation/screens/auth/otp_screen.dart';
+import 'package:tech_podcast_mobile/presentation/screens/auth/signup_screen.dart';
 import 'package:tech_podcast_mobile/presentation/screens/dashboard_screen.dart';
 import 'package:tech_podcast_mobile/presentation/screens/home/home_screen.dart';
 import 'package:tech_podcast_mobile/presentation/screens/library/library_screen.dart';
@@ -20,6 +21,7 @@ import 'package:tech_podcast_mobile/presentation/screens/playlist/playlist_scree
 import 'package:tech_podcast_mobile/presentation/screens/profile/profile_screen.dart';
 import 'package:tech_podcast_mobile/presentation/screens/onboarding/onboarding_screen.dart';
 import 'package:tech_podcast_mobile/presentation/screens/library/vault_screen.dart';
+import 'package:tech_podcast_mobile/presentation/screens/pricing/pricing_screen.dart'; // Add import
 import 'package:tech_podcast_mobile/core/providers/dummy_user_provider.dart';
 
 part 'app_router.g.dart';
@@ -42,6 +44,10 @@ GoRouter appRouter(AppRouterRef ref) {
         builder: (context, state) => const OnboardingScreen(),
       ),
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
+      GoRoute(
+        path: '/signup',
+        builder: (context, state) => const SignupScreen(),
+      ),
       GoRoute(
         path: '/otp',
         builder: (context, state) {
@@ -94,6 +100,11 @@ GoRouter appRouter(AppRouterRef ref) {
         path: '/vault',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const VaultScreen(),
+      ),
+      GoRoute(
+        path: '/pricing',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const PricingScreen(),
       ),
       // StatefulShellRoute for Bottom Navigation
       StatefulShellRoute.indexedStack(

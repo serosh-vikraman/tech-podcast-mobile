@@ -60,193 +60,132 @@ class _TechBattleScreenState extends State<TechBattleScreen> {
                 style: TextStyle(color: Color(0xFFA3A3A3), fontSize: 13),
               ),
               const SizedBox(height: 24),
+              // Form Content
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Left: Inputs
                   Expanded(
-                    flex: 6,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  _buildLabel(
-                                    'Contender A (Left Corner)',
-                                    const Color(0xFFF87171),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  _buildTextField(_contenderAController),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  _buildLabel(
-                                    'Contender B (Right Corner)',
-                                    const Color(0xFF60A5FA),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  _buildTextField(_contenderBController),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
                         _buildLabel(
-                          'Battle Context (Optional)',
-                          const Color(0xFFF59E0B),
+                          'Contender A (Left Corner)',
+                          const Color(0xFFF87171),
                         ),
                         const SizedBox(height: 8),
-                        TextField(
-                          controller: _contextController,
-                          maxLines: 4,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 13,
-                          ),
-                          decoration: InputDecoration(
-                            hintText:
-                                "e.g. Focus on performance in 2024 and server-side rendering support...",
-                            hintStyle: const TextStyle(
-                              color: Color(0xFF475569),
-                              fontSize: 12,
-                            ),
-                            filled: true,
-                            fillColor: const Color(0xFF020617),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(
-                                color: Color(0xFF1E293B),
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(
-                                color: Color(0xFF1E293B),
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(
-                                color: Color(0xFFEF4444),
-                              ),
-                            ),
-                          ),
+                        _buildTextField(_contenderAController),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildLabel(
+                          'Contender B (Right Corner)',
+                          const Color(0xFF60A5FA),
                         ),
-                        const SizedBox(height: 20),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  _buildLabel('Duration', Colors.white),
-                                  const SizedBox(height: 8),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
+                        const SizedBox(height: 8),
+                        _buildTextField(_contenderBController),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              _buildLabel(
+                'Battle Context (Optional)',
+                Colors
+                    .white, // White label in updated design? Or maybe keep orange? Image shows white/grey label for context.
+                // Actually image text: "Battle Context (Optional)" in white/grey.
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _contextController,
+                maxLines: 4,
+                style: const TextStyle(color: Colors.white, fontSize: 13),
+                decoration: InputDecoration(
+                  hintText:
+                      "e.g. Focus on performance in 2024 and server-side rendering support...",
+                  hintStyle: const TextStyle(
+                    color: Color(0xFF475569),
+                    fontSize: 12,
+                  ),
+                  filled: true,
+                  fillColor: const Color(0xFF020617),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: Color(0xFF1E293B)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: Color(0xFF1E293B)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: Color(0xFFEF4444)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildLabel('Duration', Colors.white),
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF020617),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: const Color(0xFF1E293B)),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<String>(
+                                    value: _duration,
+                                    dropdownColor: const Color(0xFF0F172A),
+                                    isExpanded: true,
+                                    icon: const Icon(
+                                      Icons.keyboard_arrow_down,
+                                      color: Color(0xFF64748B),
+                                      size: 16,
                                     ),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFF020617),
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(
-                                        color: const Color(0xFF1E293B),
-                                      ),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 13,
                                     ),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: DropdownButtonHideUnderline(
-                                            child: DropdownButton<String>(
-                                              value: _duration,
-                                              dropdownColor: const Color(
-                                                0xFF0F172A,
-                                              ),
-                                              isExpanded: true,
-                                              icon: const Icon(
-                                                Icons.keyboard_arrow_down,
-                                                color: Color(0xFF64748B),
-                                                size: 16,
-                                              ),
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 13,
-                                              ),
-                                              items: ['Standard Bout (~5m)']
-                                                  .map(
-                                                    (e) => DropdownMenuItem(
-                                                      value: e,
-                                                      child: Text(e),
-                                                    ),
-                                                  )
-                                                  .toList(),
-                                              onChanged: (_) {},
-                                            ),
+                                    items: ['Standard Bout (~5m)']
+                                        .map(
+                                          (e) => DropdownMenuItem(
+                                            value: e,
+                                            child: Text(e),
                                           ),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        const Icon(
-                                          Icons.lock,
-                                          color: Color(0xFFF59E0B),
-                                          size: 14,
-                                        ),
-                                      ],
-                                    ),
+                                        )
+                                        .toList(),
+                                    onChanged: (_) {},
                                   ),
-                                ],
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  _buildLabel('Host Accent', Colors.white),
-                                  const SizedBox(height: 8),
-                                  _buildDropdown(_hostAccent, ['us American']),
-                                ],
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(width: 24),
-                  // Right: Info Cards
+                  const SizedBox(width: 16),
                   Expanded(
-                    flex: 4,
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildInfoCard(
-                          Icons.balance,
-                          'Unbiased Analysis',
-                          'Our AI hosts analyze benchmarks, community sentiment, and documentation to give a fair fight.',
-                          const Color(0xFF818CF8),
-                        ),
-                        const SizedBox(height: 12),
-                        _buildInfoCard(
-                          Icons.emoji_events,
-                          'Clear Verdict',
-                          'No "it depends" cop-outs. We tell you exactly when to pick which stack.',
-                          const Color(0xFFFBBF24),
-                        ),
-                        const SizedBox(height: 12),
-                        _buildInfoCard(
-                          Icons.warning_amber,
-                          'Gotchas Revealed',
-                          'We expose the hidden complexities and rough edges of each technology.',
-                          const Color(0xFFF87171),
-                        ),
+                        _buildLabel('Host Accent', Colors.white),
+                        const SizedBox(height: 8),
+                        _buildDropdown(_hostAccent, ['us American']),
                       ],
                     ),
                   ),
@@ -385,37 +324,6 @@ class _TechBattleScreenState extends State<TechBattleScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildInfoCard(IconData icon, String title, String desc, Color color) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF0F172A),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFF1E293B)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: color, size: 20),
-          const SizedBox(height: 8),
-          Text(
-            title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            desc,
-            style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 10),
-          ),
-        ],
       ),
     );
   }
