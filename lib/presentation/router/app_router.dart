@@ -166,7 +166,9 @@ GoRouter appRouter(AppRouterRef ref) {
       final isLoggedIn = session != null || isDummyLoggedIn;
 
       final isLoggingIn =
-          state.uri.path == '/login' || state.uri.path == '/otp';
+          state.uri.path == '/login' ||
+          state.uri.path == '/otp' ||
+          state.uri.path == '/signup';
 
       if (!isLoggedIn && !isLoggingIn) {
         if (state.uri.path == '/onboarding') return null; // Allow onboarding

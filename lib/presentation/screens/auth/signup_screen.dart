@@ -41,22 +41,44 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       backgroundColor: const Color(0xFF030712), // Dark App Background
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 40),
+              const SizedBox(height: 20),
+              // Logo
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.transparent, // Placeholder for logo
+                  // image: DecorationImage(image: AssetImage('assets/images/logo.png')),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF6366F1).withOpacity(0.5),
+                      blurRadius: 30,
+                      spreadRadius: -5,
+                    ),
+                  ],
+                ),
+                child: const Icon(Icons.waves, size: 48, color: Colors.white), // Placeholder Icon
+              ),
+              const SizedBox(height: 32),
+
               // Title
               const Text(
                 'Create your account',
                 style: TextStyle(
-                  fontSize: 32,
+                  fontSize: 28,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
+                  letterSpacing: -0.5,
                 ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
+
               // Subtitle with Link
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -72,23 +94,22 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       style: TextStyle(
                         color: Color(0xFF818CF8), // Indigo 400
                         fontSize: 14,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 40),
 
-              // Form Card
+              // Form Card (Subtle background as per screenshot style usually implies either no card or very subtle)
+              // The screenshot description said "card-like container". I will keep it but make it very subtle.
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: const Color(
-                    0xFF111827,
-                  ).withOpacity(0.5), // Semi-transparent dark
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0xFF1F2937)),
+                  color: const Color(0xFF111827).withOpacity(0.3), // Very subtle
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.white.withOpacity(0.05)),
                 ),
                 child: FormBuilder(
                   key: _formKey,
@@ -98,40 +119,37 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       _buildLabel('Email address'),
                       FormBuilderTextField(
                         name: 'email',
-                        decoration: _inputDecoration('Enter your email'),
+                        decoration: _inputDecoration('name@example.com'),
                         style: const TextStyle(color: Colors.white),
                         validator: FormBuilderValidators.compose([
                           FormBuilderValidators.required(),
                           FormBuilderValidators.email(),
                         ]),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 20),
 
                       _buildLabel('Password'),
                       FormBuilderTextField(
                         name: 'password',
                         obscureText: true,
-                        decoration: _inputDecoration('Enter your password'),
+                        decoration: _inputDecoration('••••••••'),
                         style: const TextStyle(color: Colors.white),
                         validator: FormBuilderValidators.compose([
                           FormBuilderValidators.required(),
                           FormBuilderValidators.minLength(6),
                         ]),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 20),
 
                       _buildLabel('Confirm Password'),
                       FormBuilderTextField(
                         name: 'confirm_password',
                         obscureText: true,
-                        decoration: _inputDecoration('Confirm your password'),
+                        decoration: _inputDecoration('••••••••'),
                         style: const TextStyle(color: Colors.white),
                         validator: (val) {
                           if (val !=
-                              _formKey
-                                  .currentState
-                                  ?.fields['password']
-                                  ?.value) {
+                              _formKey.currentState?.fields['password']?.value) {
                             return 'Passwords do not match';
                           }
                           return null;
@@ -142,7 +160,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       // Sign Up Button
                       Container(
                         width: double.infinity,
-                        height: 56,
+                        height: 52,
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
                             colors: [
@@ -152,7 +170,14 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                             begin: Alignment.centerLeft,
                             end: Alignment.centerRight,
                           ),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF6366F1).withOpacity(0.3),
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
                         ),
                         child: ElevatedButton(
                           onPressed: _isLoading ? null : _onSignup,
@@ -160,17 +185,16 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                             backgroundColor: Colors.transparent,
                             shadowColor: Colors.transparent,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
                           child: _isLoading
                               ? const CircularProgressIndicator(
-                                  color: Colors.white,
-                                )
+                                  color: Colors.white, strokeWidth: 2)
                               : const Text(
                                   'Sign up',
                                   style: TextStyle(
-                                    fontSize: 18,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                   ),
@@ -192,8 +216,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                             child: Text(
                               'Or continue with',
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.5),
-                                fontSize: 14,
+                                color: Colors.grey[500],
+                                fontSize: 13,
                               ),
                             ),
                           ),
@@ -207,42 +231,48 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       const SizedBox(height: 32),
 
                       // Google Button
-                      OutlinedButton(
-                        onPressed: () {}, // Google Auth Logic
-                        style: OutlinedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 52,
+                        child: ElevatedButton(
+                          onPressed: () {}, // Google Auth Logic
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: Colors.black,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
-                          side: BorderSide.none,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // Simple G icon if asset not available
-                            const Icon(
-                              Icons.g_mobiledata,
-                              color: Colors.black,
-                              size: 28,
-                            ),
-                            // Image.asset('assets/images/google.png', height: 24), // Uncomment if asset exists
-                            const SizedBox(width: 12),
-                            const Text(
-                              'Continue with Google',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // G Icon
+                              Image.network(
+                                'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png',
+                                height: 24,
+                                width: 24,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    const Icon(Icons.g_mobiledata, size: 28),
                               ),
-                            ),
-                          ],
+                              const SizedBox(width: 12),
+                              const Text(
+                                'Continue with Google',
+                                style: TextStyle(
+                                  color: Color(0xFF1F2937),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
+              const SizedBox(height: 40),
             ],
           ),
         ),

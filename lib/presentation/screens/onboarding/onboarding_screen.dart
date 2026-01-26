@@ -163,7 +163,7 @@ class OnboardingScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       TextButton(
-                        onPressed: () {}, // Not impl yet
+                        onPressed: () => context.push('/signup'),
                         style: TextButton.styleFrom(
                           foregroundColor: const Color(0xFFA78BFA),
                         ),
