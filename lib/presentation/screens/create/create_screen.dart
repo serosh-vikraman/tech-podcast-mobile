@@ -94,9 +94,10 @@ class CreateScreen extends StatelessWidget {
       },
     ];
 
-    return Scaffold(
-      backgroundColor: const Color(0xFF030712), // Dark App Background
-      body: SafeArea(
+    // NO Scaffold - DashboardScreen provides it
+    return ColoredBox(
+      color: const Color(0xFF030712),
+      child: SafeArea(
         child: CustomScrollView(
           slivers: [
             SliverPadding(

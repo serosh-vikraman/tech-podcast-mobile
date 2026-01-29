@@ -13,6 +13,11 @@
 
          This Theme is only used starting with V2 of Flutter's Android embedding. -->
     <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
-        <item name="android:windowBackground">?android:colorBackground</item>
+        <!-- Set window background to match app theme to prevent gray flashes during startup -->
+        <item name="android:windowBackground">#030712</item>
+        <!-- Navigation bar color matches app background -->
+        <item name="android:navigationBarColor">#030712</item>
+        <!-- Opt out of edge-to-edge to prevent gray overlays -->
+        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
     </style>
 </resources>

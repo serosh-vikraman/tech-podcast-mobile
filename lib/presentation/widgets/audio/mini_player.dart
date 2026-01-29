@@ -8,11 +8,17 @@ class MiniPlayer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Watch the AudioHandler from our provider
-    final audioHandler = ref.watch(audioHandlerProvider);
+    // Watch the AudioHandler from our provider - handle case where it might not be initialized
+    AudioHandler handler;
+    try {
+      handler = ref.watch(audioHandlerProvider);
+    } catch (e) {
+      // AudioHandler not initialized, don't show mini player
+      return const SizedBox.shrink();
+    }
 
     return StreamBuilder<MediaItem?>(
-      stream: audioHandler.mediaItem,
+      stream: handler.mediaItem,
       builder: (context, snapshot) {
         final mediaItem = snapshot.data;
         // Hide if nothing is playing or queued
@@ -21,7 +27,7 @@ class MiniPlayer extends ConsumerWidget {
         return Dismissible(
           key: const Key('mini_player'),
           direction: DismissDirection.down,
-          onDismissed: (_) => audioHandler.stop(),
+          onDismissed: (_) => handler.stop(),
           child: Container(
             height: 66,
             margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -81,7 +87,7 @@ class MiniPlayer extends ConsumerWidget {
                 
                 // Controls
                 StreamBuilder<PlaybackState>(
-                  stream: audioHandler.playbackState,
+                  stream: handler.playbackState,
                   builder: (context, snapshot) {
                     final playing = snapshot.data?.playing ?? false;
                     final processingState = snapshot.data?.processingState ?? AudioProcessingState.idle;
@@ -96,14 +102,14 @@ class MiniPlayer extends ConsumerWidget {
                           )
                         else
                           IconButton(
-                            onPressed: playing ? audioHandler.pause : audioHandler.play,
+                            onPressed: playing ? handler.pause : handler.play,
                             icon: Icon(playing ? Icons.pause_rounded : Icons.play_arrow_rounded),
                             color: Colors.white,
                             iconSize: 32,
                           ),
                           
                         IconButton(
-                          onPressed: audioHandler.stop, // Or skip next
+                          onPressed: handler.stop, // Or skip next
                           icon: const Icon(Icons.close_rounded),
                           color: Colors.white60,
                         ),

@@ -61,9 +61,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     const bgColor = Color(0xFF030712); // Rich Dark Navy / Gray 950
     const textPrimary = Color(0xFFF9FAFB); // White
 
-    return Scaffold(
-      backgroundColor: bgColor,
-      body: SafeArea(
+    // NO Scaffold - DashboardScreen provides it
+    return ColoredBox(
+      color: bgColor,
+      child: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.only(bottom: 100),
           child: Column(

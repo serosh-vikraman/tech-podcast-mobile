@@ -37,9 +37,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     const bgColor = Color(0xFF030712); // Dark Navy
     const textPrimary = Color(0xFFF9FAFB);
 
-    return Scaffold(
-      backgroundColor: bgColor,
-      body: SafeArea(
+    // NO Scaffold - DashboardScreen provides it
+    return ColoredBox(
+      color: bgColor,
+      child: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.only(bottom: 120),
           child: Padding(

@@ -9,9 +9,10 @@ class PlaylistScreen extends StatelessWidget {
     const bgColor = Color(0xFF030712);
     const textPrimary = Color(0xFFF9FAFB);
 
-    return Scaffold(
-      backgroundColor: bgColor,
-      body: ListView(
+    // NO Scaffold - DashboardScreen provides it
+    return ColoredBox(
+      color: bgColor,
+      child: ListView(
         padding: const EdgeInsets.all(20),
         children: [
           Row(

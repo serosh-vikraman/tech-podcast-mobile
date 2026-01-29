@@ -13,10 +13,10 @@ class AppTheme {
   static const Color border = Color(0xFF1F2937);
 
   static final ThemeData darkTheme = ThemeData(
-    useMaterial3: true,
+    useMaterial3: false, // Disabled to prevent Material 3 surface tints
     brightness: Brightness.dark,
     scaffoldBackgroundColor: background,
-    colorScheme: const ColorScheme.dark(
+    colorScheme: ColorScheme.dark(
       primary: primary,
       secondary: accent,
       surface: surface,
