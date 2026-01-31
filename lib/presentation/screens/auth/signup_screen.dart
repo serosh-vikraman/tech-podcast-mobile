@@ -5,6 +5,8 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tech_podcast_mobile/core/providers/dummy_user_provider.dart';
 
+import 'package:tech_podcast_mobile/data/repositories/auth_repository.dart';
+
 class SignupScreen extends ConsumerStatefulWidget {
   const SignupScreen({super.key});
 
@@ -32,6 +34,24 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
         );
         context.go('/'); // Go to home after signup
       }
+    }
+  }
+
+  Future<void> _onGoogleSignIn() async {
+    setState(() => _isLoading = true);
+    try {
+      await ref.read(authRepositoryProvider).signInWithGoogle();
+      if (mounted) {
+         context.go('/');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Google Sign-In Error: $e')));
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -235,7 +255,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                         width: double.infinity,
                         height: 52,
                         child: ElevatedButton(
-                          onPressed: () {}, // Google Auth Logic
+                          onPressed: _isLoading ? null : _onGoogleSignIn,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
                             foregroundColor: Colors.black,

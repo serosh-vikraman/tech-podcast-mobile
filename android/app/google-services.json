@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "868273007836",
+    "project_id": "careertwin-ai",
+    "storage_bucket": "careertwin-ai.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:868273007836:android:73d2bb007c471649471819",
+        "android_client_info": {
+          "package_name": "ai.careertwin.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "868273007836-n20bn7mv29vgt7fu8cufd2vnqv7pii7d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ai.careertwin.mobile",
+            "certificate_hash": "8753c01de8d13d519e81c384b85de6b760fbbfc0"
+          }
+        },
+        {
+          "client_id": "868273007836-8rr5si869gfm35ernonalbqu8g653b4d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6cY5eezF-4--k_opfvTi61TEc6bAPVsk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "868273007836-8rr5si869gfm35ernonalbqu8g653b4d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

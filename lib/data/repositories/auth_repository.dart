@@ -1,5 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/foundation.dart';
 
 part 'auth_repository.g.dart';
 
@@ -35,12 +37,51 @@ class AuthRepository {
   }
 
   Future<void> signInWithGoogle() async {
-    // Native Google Sign In flow requires setup in Google Cloud Console
-    // For now, we use the web-based flow as a fallback or starting point
-    await _auth.signInWithOAuth(
-      OAuthProvider.google,
-      redirectTo: 'com.careerCast.techPodcast://login-callback',
+    // WEB IMPLEMENTATION
+    if (kIsWeb) {
+      await _auth.signInWithOAuth(
+        OAuthProvider.google,
+        redirectTo: kIsWeb ? null : 'ai.careertwin.mobile://login-callback',
+      );
+      return;
+    }
+
+    // MOBILE IMPLEMENTATION (Android/iOS)
+    /// Web Client ID that you registered with Google Cloud.
+    /// This is required for Google Sign In on Android to return an ID Token.
+    const webClientId = '868273007836-8rr5si869gfm35ernonalbqu8g653b4d.apps.googleusercontent.com';
+    
+    final GoogleSignIn googleSignIn = GoogleSignIn(
+      serverClientId: webClientId,
     );
+    
+    try {
+        final googleUser = await googleSignIn.signIn();
+        final googleAuth = await googleUser?.authentication;
+
+        if (googleAuth == null) {
+          // User cancelled or error
+          return;
+        }
+
+        final accessToken = googleAuth.accessToken;
+        final idToken = googleAuth.idToken;
+
+        if (accessToken == null) {
+          throw 'No Access Token found.';
+        }
+        if (idToken == null) {
+          throw 'No ID Token found.';
+        }
+
+        await _auth.signInWithIdToken(
+          provider: OAuthProvider.google,
+          idToken: idToken,
+          accessToken: accessToken,
+        );
+    } catch (e) {
+        rethrow;
+    }
   }
 
   Future<void> signOut() async {
