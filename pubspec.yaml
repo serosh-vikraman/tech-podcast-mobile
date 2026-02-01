@@ -49,6 +49,8 @@ dependencies:
   pinput: ^4.0.0
   form_builder_validators: any
   file_picker: ^10.3.8
+  firebase_core: ^4.4.0
+  firebase_auth: ^6.1.4
 
 dev_dependencies:
   flutter_test:

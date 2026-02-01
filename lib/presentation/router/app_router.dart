@@ -161,9 +161,9 @@ GoRouter appRouter(AppRouterRef ref) {
       ),
     ],
     redirect: (context, state) {
-      final session = authRepository.currentSession;
+      final user = authRepository.currentUser;
       final isDummyLoggedIn = ref.read(dummyUserProvider);
-      final isLoggedIn = session != null || isDummyLoggedIn;
+      final isLoggedIn = user != null || isDummyLoggedIn;
 
       final isLoggingIn =
           state.uri.path == '/login' ||

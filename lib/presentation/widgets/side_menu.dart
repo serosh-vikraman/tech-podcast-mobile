@@ -2,13 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tech_podcast_mobile/core/providers/dummy_user_provider.dart';
+import 'package:tech_podcast_mobile/data/repositories/auth_repository.dart';
 
 class SideMenu extends ConsumerWidget {
   const SideMenu({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Dark theme colors
+    final authRepository = ref.watch(authRepositoryProvider);
+    final user = authRepository.currentUser;
+    final email = user?.email ?? 'Guest';
+    final name = user?.displayName ?? 'User';
+
+    // ... colors ...
     const backgroundColor = Color(0xFF1F2937); // Dark Gray
     const headerColor = Color(0xFF111827); // Darker Gray
     const iconColor = Color(0xFF9CA3AF); // Light Gray
@@ -27,22 +33,23 @@ class SideMenu extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 30,
-                    backgroundColor: Color(0xFF374151),
-                    child: Text(
-                      'S',
-                      style: TextStyle(
+                    backgroundColor: const Color(0xFF374151),
+                    backgroundImage: user?.photoURL != null ? NetworkImage(user!.photoURL!) : null,
+                    child: user?.photoURL == null ? Text(
+                      name.isNotEmpty ? name[0].toUpperCase() : 'U',
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
-                    ),
+                    ) : null,
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    'User',
-                    style: TextStyle(
+                  Text(
+                    name,
+                    style: const TextStyle(
                       color: textColor,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -50,8 +57,8 @@ class SideMenu extends ConsumerWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'seroshkv@gmail.com',
-                    style: TextStyle(color: iconColor, fontSize: 14),
+                    email,
+                    style: const TextStyle(color: iconColor, fontSize: 14),
                   ),
                 ],
               ),
@@ -69,15 +76,6 @@ class SideMenu extends ConsumerWidget {
                     label: 'My Twin Profile',
                     onTap: () {
                       context.pop(); // Close drawer
-                      //context.go('/profile');
-                      context.push(
-                        '/profile',
-                      ); // Push so back button works? OR context.go logic?
-                      // Actually context.go('/profile') switches the shell branch usually.
-                      // Let's use go('/profile') to switch tabs if it's a shell route.
-                      // But wait, profile IS a shell route branch. So /profile works.
-                      // Howerver, since it's a shell branch, push might push a duplicate profile screen ON TOP of the shell.
-                      // Ideally we want to switch the bottom tab.
                       context.go('/profile');
                     },
                   ),
@@ -136,10 +134,13 @@ class SideMenu extends ConsumerWidget {
                     label: 'Sign Out',
                     textColor: const Color(0xFFEF4444),
                     iconColor: const Color(0xFFEF4444),
-                    onTap: () {
+                    onTap: () async {
                       context.pop(); // Close drawer
+                      await ref.read(authRepositoryProvider).signOut();
                       ref.read(dummyUserProvider.notifier).logout();
-                      context.go('/login');
+                      if (context.mounted) {
+                        context.go('/login');
+                      }
                     },
                   ),
                 ],

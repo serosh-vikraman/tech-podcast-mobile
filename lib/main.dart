@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:tech_podcast_mobile/firebase_options.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:tech_podcast_mobile/core/supabase_config.dart';
@@ -41,8 +43,16 @@ Future<void> main() async {
       anonKey: SupabaseConfig.anonKey,
     );
   } catch (e) {
-    // Log error but don't crash - app can still work without Supabase initially
     debugPrint('Supabase initialization error: $e');
+  }
+
+  // Initialize Firebase (Required for Auth)
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    debugPrint('Firebase initialization error: $e');
   }
 
   // Initialize AudioService with error handling

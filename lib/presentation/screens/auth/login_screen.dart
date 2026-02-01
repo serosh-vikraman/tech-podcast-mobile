@@ -38,6 +38,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     setState(() => _isLoading = true);
     try {
       await ref.read(authRepositoryProvider).signInWithGoogle();
+      if (mounted) {
+        context.go('/');
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(

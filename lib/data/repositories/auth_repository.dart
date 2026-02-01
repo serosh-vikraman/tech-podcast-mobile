@@ -1,90 +1,81 @@
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_repository.g.dart';
 
 @Riverpod(keepAlive: true)
 AuthRepository authRepository(AuthRepositoryRef ref) {
-  return AuthRepository(Supabase.instance.client.auth);
+  return AuthRepository(FirebaseAuth.instance);
 }
 
 class AuthRepository {
-  final GoTrueClient _auth;
+  final FirebaseAuth _auth;
 
   AuthRepository(this._auth);
 
-  Stream<AuthState> get authStateChanges => _auth.onAuthStateChange;
-  Session? get currentSession => _auth.currentSession;
+  Stream<User?> get authStateChanges => _auth.authStateChanges();
+  User? get currentUser => _auth.currentUser;
 
   Future<void> signInWithOtp({required String phone}) async {
-    await _auth.signInWithOtp(
-      phone: phone,
-      shouldCreateUser: true,
-    );
+    // TODO: Implement Firebase Phone Auth
+    throw UnimplementedError('Firebase Phone Auth not implemented yet');
   }
 
-  Future<AuthResponse> verifyOtp({
+  Future<void> verifyOtp({
     required String phone,
     required String token,
   }) async {
-    return await _auth.verifyOTP(
-      phone: phone,
-      token: token,
-      type: OtpType.sms,
-    );
+     // TODO: Implement Firebase Phone Auth Verification
+     throw UnimplementedError('Firebase Phone Auth Verification not implemented yet');
   }
 
   Future<void> signInWithGoogle() async {
     // WEB IMPLEMENTATION
     if (kIsWeb) {
-      await _auth.signInWithOAuth(
-        OAuthProvider.google,
-        redirectTo: kIsWeb ? null : 'ai.careertwin.mobile://login-callback',
-      );
+      // Create a new provider
+      GoogleAuthProvider authProvider = GoogleAuthProvider();
+      // Once signed in, return the UserCredential
+      await _auth.signInWithPopup(authProvider);
       return;
     }
 
     // MOBILE IMPLEMENTATION (Android/iOS)
-    /// Web Client ID that you registered with Google Cloud.
-    /// This is required for Google Sign In on Android to return an ID Token.
-    const webClientId = '868273007836-8rr5si869gfm35ernonalbqu8g653b4d.apps.googleusercontent.com';
-    
-    final GoogleSignIn googleSignIn = GoogleSignIn(
-      serverClientId: webClientId,
-    );
+    // We do NOT need serverVerifiedId for Firebase Auth with GoogleSignIn usually, 
+    // unless we are doing backend verification manually. Firebase handles it.
+    // However, google_sign_in needs standard setup.
+
+    final GoogleSignIn googleSignIn = GoogleSignIn();
     
     try {
-        final googleUser = await googleSignIn.signIn();
-        final googleAuth = await googleUser?.authentication;
+        final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
-        if (googleAuth == null) {
-          // User cancelled or error
+        if (googleUser == null) {
+          // User cancelled
           return;
         }
 
-        final accessToken = googleAuth.accessToken;
-        final idToken = googleAuth.idToken;
-
-        if (accessToken == null) {
-          throw 'No Access Token found.';
-        }
-        if (idToken == null) {
-          throw 'No ID Token found.';
-        }
-
-        await _auth.signInWithIdToken(
-          provider: OAuthProvider.google,
-          idToken: idToken,
-          accessToken: accessToken,
+        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+        
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
         );
+
+        // Sign in to Firebase with the Google credential
+        await _auth.signInWithCredential(credential);
+
     } catch (e) {
+        debugPrint("Google Sign In Error: $e");
         rethrow;
     }
   }
 
   Future<void> signOut() async {
     await _auth.signOut();
+    if (!kIsWeb) {
+      await GoogleSignIn().signOut();
+    }
   }
 }
