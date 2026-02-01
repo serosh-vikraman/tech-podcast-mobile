@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:tech_podcast_mobile/data/models/audio_job_model.dart';
+import 'package:tech_podcast_mobile/data/repositories/podcast_repository.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -10,9 +13,19 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  final AudioPlayer _player = AudioPlayer();
   int _selectedCategoryIndex = 0;
 
+  @override
+  void dispose() {
+    _player.dispose();
+    super.dispose();
+  }
+
+  // ... rest of class vars ...
+
   final List<Map<String, dynamic>> _studioFeatures = [
+    // ... items ...
     {
       'title': 'The Interview Twin',
       'color': Color(0xFF10B981), // Emerald
@@ -57,6 +70,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // ... existing build ...
     // Dark Theme Colors
     const bgColor = Color(0xFF030712); // Rich Dark Navy / Gray 950
     const textPrimary = Color(0xFFF9FAFB); // White
@@ -106,254 +120,244 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildRecentPodcastsCarousel() {
-    // Mock data for carousel
-    final items = [
-      {
-        'title': 'Talk Show Podcast.',
-        'subtitle': 'Conversations with Lisa Maclear.',
-        'imageColor': Color(0xFFD4D4D8),
-        'gradient': [Color(0xFFFDE047), Color(0xFFF9A8D4)],
-      },
-      {
-        'title': 'Writing Podcast Cover.',
-        'subtitle': 'with Lucy Ross',
-        'imageColor': Color(0xFFFB923C),
-        'gradient': [Color(0xFFFB923C), Color(0xFFFDBA74)],
-      },
-      {
-        'title': ' The Future of AI.',
-        'subtitle': 'Exploring AGI with Dr. Smith.',
-        'imageColor': Color(0xFF60A5FA),
-        'gradient': [Color(0xFF60A5FA), Color(0xFF93C5FD)],
-      },
-      {
-        'title': 'Flutter Mastery.',
-        'subtitle': 'Advanced techniques.',
-        'imageColor': Color(0xFF34D399),
-        'gradient': [Color(0xFF34D399), Color(0xFF6EE7B7)],
-      },
-      {
-        'title': 'System Design.',
-        'subtitle': 'Scalability patterns.',
-        'imageColor': Color(0xFFA78BFA),
-        'gradient': [Color(0xFFA78BFA), Color(0xFFC4B5FD)],
-      },
-    ];
+    final recentAsync = ref.watch(recentPodcastsProvider);
 
-    return SizedBox(
-      height: 180,
-      child: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        scrollDirection: Axis.horizontal,
-        itemCount: items.length,
-        separatorBuilder: (c, i) => const SizedBox(width: 16),
-        itemBuilder: (context, index) {
-          final item = items[index];
-          return Container(
-            width: 280,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: item['gradient'] as List<Color>,
-                begin: Alignment.bottomLeft,
-                end: Alignment.topRight,
-              ),
-              borderRadius: BorderRadius.circular(24),
-            ),
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    'EPISODE ${index + 1}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  item['title'] as String,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    height: 1.1,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  item['subtitle'] as String,
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
-                    fontSize: 14,
-                  ),
-                ),
-              ],
-            ),
+    return recentAsync.when(
+      data: (jobs) {
+        if (jobs.isEmpty) {
+          return const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Text("No recent podcasts found.", style: TextStyle(color: Colors.grey)),
           );
-        },
-      ),
-    );
-  }
+        }
 
-  Widget _buildCategoryChips() {
-    return SizedBox(
-      height: 40,
-      child: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        scrollDirection: Axis.horizontal,
-        itemCount: _studioFeatures.length,
-        separatorBuilder: (c, i) => const SizedBox(width: 10),
-        itemBuilder: (context, index) {
-          final feature = _studioFeatures[index];
-          final isSelected = index == _selectedCategoryIndex;
-          final color = feature['color'] as Color;
-          final count = feature['count'] as int;
+        return SizedBox(
+          height: 180,
+          child: ListView.separated(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            scrollDirection: Axis.horizontal,
+            itemCount: jobs.length,
+            separatorBuilder: (c, i) => const SizedBox(width: 16),
+            itemBuilder: (context, index) {
+              final job = jobs[index];
+              final categoryText = job.category ?? _getJobCategoryTitle(job.type);
 
-          return GestureDetector(
-            onTap: () {
-              setState(() {
-                _selectedCategoryIndex = index;
-              });
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                // Dark surface for unselected
-                color: isSelected
-                    ? color.withOpacity(0.2)
-                    : const Color(0xFF111827),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: isSelected ? color : const Color(0xFF374151),
-                ),
-              ),
-              child: Text(
-                '${feature['title']} ($count)',
-                style: TextStyle(
-                  color: isSelected ? color : const Color(0xFF9CA3AF),
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildPodcastList() {
-    // Determine current category color for styling
-    final currentColor =
-        _studioFeatures[_selectedCategoryIndex]['color'] as Color;
-
-    // Mock items - TEMPORARILY EMPTY to show Empty State
-    final items = [
-      // {'title': 'Enjoy It!', 'subtitle': 'Socially Buzzed', 'dur': '22 min'},
-      // {'title': 'Grow with Us', 'subtitle': 'Business', 'dur': '12 min'},
-      // {
-      //   'title': 'Crack the Interview',
-      //   'subtitle': 'Educational',
-      //   'dur': '30 min',
-      // },
-      // {'title': 'The Daily Standup', 'subtitle': 'Tech News', 'dur': '15 min'},
-    ];
-
-    if (items.isEmpty) {
-      return _buildEmptyState();
-    }
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        children: items.map((item) {
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 16),
-            child: Row(
-              children: [
-                // Thumbnail
-                Container(
-                  width: 64,
-                  height: 64,
+              return GestureDetector(
+                onTap: () {
+                  context.push('/player', extra: job);
+                },
+                child: Container(
+                  width: 280,
+                  padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: currentColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: currentColor.withOpacity(0.3)),
-                    image: const DecorationImage(
-                      image: NetworkImage(
-                        'https://via.placeholder.com/150',
-                      ), // Placeholder
-                      fit: BoxFit.cover,
+                    gradient: LinearGradient(
+                      colors: _getGradientForType(job.type),
+                      begin: Alignment.bottomLeft,
+                      end: Alignment.topRight,
                     ),
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
-                  child: Icon(Icons.podcasts, color: currentColor, size: 30),
-                ),
-                const SizedBox(width: 16),
-
-                // Text Info
-                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Category Pill
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          categoryText.toUpperCase(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                      
+                      const Spacer(),
+                      
+                      // Title
                       Text(
-                        item['title']!,
+                        job.title,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontSize: 16,
+                          color: Colors.white,
+                          fontSize: 18, // Reduced from 22
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFFF9FAFB), // White
+                          height: 1.2,
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        item['subtitle']!,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: Color(0xFFD1D5DB), // Light Gray
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        item['dur']!,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFF6B7280), // Muted Gray
+                      const SizedBox(height: 8),
+                      // Author/Subtitle (Optional based on screenshot "with Lucy Ross")
+                      // If subtitle is short, we can show it, otherwise hide description
+                      // Using "with AI Host" or similar if no specific author logic
+                       Text(
+                        'with CareerTwin AI', 
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.9),
+                          fontSize: 14,
                         ),
                       ),
                     ],
                   ),
                 ),
-
-                // Play Button
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: currentColor.withOpacity(0.1),
-                    shape: BoxShape.circle,
-                    border: Border.all(color: currentColor.withOpacity(0.3)),
-                  ),
-                  child: Icon(Icons.play_arrow_rounded, color: currentColor),
-                ),
-              ],
-            ),
-          );
-        }).toList(),
+              );
+            },
+          ),
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (err, stack) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Text('Error: $err', style: const TextStyle(color: Colors.red)),
       ),
     );
+  }
+
+  Widget _buildPodcastList() {
+    final recentAsync = ref.watch(recentPodcastsProvider);
+
+    return recentAsync.when(
+      data: (jobs) {
+        if (jobs.isEmpty) return _buildEmptyState();
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: jobs.map((job) {
+              // Determine color based on type or use default
+              final colors = _getGradientForType(job.type);
+              final primaryColor = colors[0];
+
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Row(
+                  children: [
+                    // Thumbnail
+                    Container(
+                      width: 64,
+                      height: 64,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: colors.map((c) => c.withOpacity(0.4)).toList(),
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: primaryColor.withOpacity(0.3)),
+                      ),
+                      child: Icon(Icons.podcasts, color: primaryColor, size: 30),
+                    ),
+                    const SizedBox(width: 16),
+
+                    // Text Info
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            job.title,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFFF9FAFB), // White
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            job.subtitle,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: Color(0xFFD1D5DB), // Light Gray
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              const Icon(Icons.timer_outlined, size: 12, color: Color(0xFF6B7280)),
+                              const SizedBox(width: 4),
+                              Text(
+                                job.durationSeconds != null 
+                                  ? _formatDuration(job.durationSeconds!) 
+                                  : 'Pending',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xFF6B7280), // Muted Gray
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Play Button
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: primaryColor.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: primaryColor.withOpacity(0.3)),
+                      ),
+                      child: Icon(Icons.play_arrow_rounded, color: primaryColor),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
+        );
+      },
+      loading: () => const SizedBox(height: 100, child: Center(child: CircularProgressIndicator())),
+      error: (_, __) => const SizedBox(), // Hide on error
+    );
+  }
+
+  // Helper moved or kept consistent
+  String _formatDuration(int seconds) {
+    final duration = Duration(seconds: seconds);
+    final minutes = duration.inMinutes;
+    final remainingSeconds = duration.inSeconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
+  }
+
+  String _getJobCategoryTitle(String type) {
+    if (type.contains('INTERVIEW_TWIN')) return 'Interview Twin';
+    if (type.contains('CONCEPT') || type.contains('NANO')) return 'Nano Learning';
+    if (type.contains('JD')) return 'JD Decoder';
+    if (type.contains('RESUME') || type.contains('RECRUITER')) return 'Recruiter\'s Eye';
+    if (type.contains('SALARY')) return 'Salary Negotiator';
+    if (type.contains('ARCH')) return 'Architecture';
+    if (type.contains('STACK') || type.contains('BATTLE')) return 'Tech Battle';
+    if (type.contains('URL')) return 'URL to Podcast';
+    return 'Podcast';
+  }
+
+  List<Color> _getGradientForType(String type) {
+    if (type.contains('INTERVIEW')) return [const Color(0xFF059669), const Color(0xFF34D399)];
+    if (type.contains('CONCEPT') || type.contains('NANO')) return [const Color(0xFF4F46E5), const Color(0xFFA78BFA)];
+    if (type.contains('JD')) return [const Color(0xFFD97706), const Color(0xFFFBBF24)];
+    if (type.contains('RESUME') || type.contains('RECRUITER')) return [const Color(0xFF7C3AED), const Color(0xFFC4B5FD)];
+    
+    // Default Yellow/Pink Design for general podcasts or unknowns
+    return [const Color(0xFFFDE047), Color(0xFFF9A8D4)];
   }
 
   Widget _buildEmptyState() {
@@ -418,6 +422,53 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+  Widget _buildCategoryChips() {
+    return SizedBox(
+      height: 40,
+      child: ListView.separated(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        scrollDirection: Axis.horizontal,
+        itemCount: _studioFeatures.length,
+        separatorBuilder: (c, i) => const SizedBox(width: 10),
+        itemBuilder: (context, index) {
+          final feature = _studioFeatures[index];
+          final isSelected = index == _selectedCategoryIndex;
+          final color = feature['color'] as Color;
+          final count = feature['count'] as int;
+
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                _selectedCategoryIndex = index;
+              });
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                // Dark surface for unselected
+                color: isSelected
+                    ? color.withOpacity(0.2)
+                    : const Color(0xFF111827),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isSelected ? color : const Color(0xFF374151),
+                ),
+              ),
+              child: Text(
+                '${feature['title']} ($count)',
+                style: TextStyle(
+                  color: isSelected ? color : const Color(0xFF9CA3AF),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

@@ -9,11 +9,9 @@ part 'dio_provider.g.dart';
 Dio dio(DioRef ref) {
   final dio = Dio(
     BaseOptions(
-      baseUrl: 'http://10.0.2.2:3000', // Default Android Emulator host for local dev
-      // For real device or production, use Supabase Function URL or your backend URL
-      // baseUrl: 'https://api.careertwin.com',
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 10),
+      baseUrl: 'https://api.careertwin.ai/api/',
+      connectTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(seconds: 30),
     ),
   );
 

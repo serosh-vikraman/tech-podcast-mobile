@@ -22,6 +22,8 @@ import 'package:tech_podcast_mobile/presentation/screens/profile/profile_screen.
 import 'package:tech_podcast_mobile/presentation/screens/onboarding/onboarding_screen.dart';
 import 'package:tech_podcast_mobile/presentation/screens/library/vault_screen.dart';
 import 'package:tech_podcast_mobile/presentation/screens/pricing/pricing_screen.dart'; // Add import
+import 'package:tech_podcast_mobile/presentation/screens/player/player_screen.dart';
+import 'package:tech_podcast_mobile/data/models/audio_job_model.dart';
 import 'package:tech_podcast_mobile/core/providers/dummy_user_provider.dart';
 
 part 'app_router.g.dart';
@@ -105,6 +107,14 @@ GoRouter appRouter(AppRouterRef ref) {
         path: '/pricing',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const PricingScreen(),
+      ),
+      GoRoute(
+        path: '/player',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+           final job = state.extra as AudioJobModel;
+           return PlayerScreen(job: job);
+        },
       ),
       // StatefulShellRoute for Bottom Navigation
       StatefulShellRoute.indexedStack(
